@@ -1,4 +1,4 @@
-module Lib
+module Flac
     (
         vorbisComments
       , getVorbisComments
