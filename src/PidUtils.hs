@@ -7,23 +7,17 @@ import System.Exit(ExitCode(ExitSuccess))
 import System.Process(readProcessWithExitCode)
 import Data.List(find, isSuffixOf)
 
-pidFdsPath :: String -> [Char]
+pidFdsPath :: String -> String
 pidFdsPath x = "/proc/" ++ x ++ "/fd"
 
-absolutePath :: String -> [String] -> Maybe String
-absolutePath basename candidates = find (\x -> isSuffixOf basename x) candidates
+absolutePath :: String -> [String] -> IO (Maybe String)
+absolutePath basename candidates = return $ find (isSuffixOf basename) candidates
 
-getAbsolutePath :: String -> IO (Maybe String)
-getAbsolutePath filename = do
-  pid <- pidOf "mplayer"
-  case pid of
-    Just p -> do
-      fds <- pidFds p
-      case fds of
-        Just f -> do
-          return $ absolutePath filename f
-        _ -> return Nothing
-    _ -> return Nothing
+getAbsolutePath :: String -> String -> IO (Maybe String)
+getAbsolutePath pname fname = do
+  pid <- pidOf pname
+  fds <- maybe (return Nothing) pidFds pid
+  maybe (return Nothing) (absolutePath fname) fds
 
 pidFds :: String -> IO (Maybe [String])
 pidFds x = do
@@ -34,7 +28,7 @@ pidFds x = do
   where
     p = pidFdsPath x
 
-pidOf :: [Char] -> IO (Maybe String)
+pidOf :: String -> IO (Maybe String)
 pidOf x = do
   (e, r, _) <- readProcessWithExitCode "pidof" [x] []
   case e of

@@ -69,7 +69,7 @@ getVorbisComments = do
   return (VorbisComments (BSC.unpack vendor) items)
 
 wBlockType :: Word8 -> BlockType
-wBlockType w = case (w .&. 0x7F) of
+wBlockType w = case w .&. 0x7F of
   0   -> StreamInfo
   1   -> Padding
   2   -> Application
@@ -101,7 +101,7 @@ getMetadataBlockHeader = do
       b1 = fromIntegral (h `shiftR` 16) :: Word8
       b2 = fromIntegral (h `shiftR`  8) :: Word8
       b3 = fromIntegral h               :: Word8
-      l  = (fromIntegral(b3) + (256*fromIntegral(b2)) + (256*256*fromIntegral(b1)))
+      l  = fromIntegral b3 + (256*fromIntegral b2) + (256*256*fromIntegral b1)
       bt = wBlockType b0
   return MetadataBlockHeader { isLast = i, blockType = bt, bytesToFollow = l }
 
@@ -109,5 +109,5 @@ vorbisComments :: Get [MetadataBlock]
 vorbisComments = do
   _  <- getWord32be -- magic fLaC
   bs <- getMetadataBlocks False
-  let fbs = filter (\x -> (blockType $ header x) == VorbisComment) bs
+  let fbs = filter (\x -> blockType (header x) == VorbisComment) bs
   return fbs
