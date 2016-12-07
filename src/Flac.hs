@@ -11,11 +11,10 @@ import Data.Bits((.&.), shiftR)
 import qualified Data.ByteString.Lazy as L
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BSC
-import qualified Data.Encoding as Enc
-import Data.Encoding.ASCII
-import Data.Encoding.UTF8
+import Data.Text hiding (filter)
+import Data.Text.Encoding as E
 
-data VorbisCommentItem = VorbisCommentItem String String deriving (Eq, Ord, Show)
+data VorbisCommentItem = VorbisCommentItem Text Text deriving (Eq, Ord, Show)
 
 data VorbisComments = VorbisComments String [VorbisCommentItem] deriving (Show)
 
@@ -49,8 +48,8 @@ getVorbisCommentItem  = do
   itemSize <- getWord32le
   itemData <- getByteString (fromEnum itemSize)
   let (keyData, valueData) = BSC.span (/= separator) itemData
-      key   = Enc.decodeStrictByteString ASCII keyData
-      value = Enc.decodeStrictByteString UTF8 (BS.tail valueData)
+      key   = E.decodeUtf8 keyData
+      value = E.decodeUtf8 (BS.tail valueData)
   return (VorbisCommentItem key value)
 
 getVorbisCommentItems :: Int -> Get [VorbisCommentItem]
