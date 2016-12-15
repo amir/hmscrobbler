@@ -48,15 +48,10 @@ main = do
       Right (pair : _) -> do
         path <- getAbsolutePath mplayerBin $ snd pair
         case path of
-          Just o ->
-            case linkToPath o of
-              Right abs -> do
-                input <- BSL.readFile abs
-                case runGetLazy vorbisComments input of
-                  Left e -> print e
-                  Right r -> print $ runGetLazy getVorbisComments (blockData $ head r)
+          Just abs -> do
+            comments <- getFileVorbisComments abs
+            print comments
 
-          Nothing -> return ()
       Left e -> return ()
 
   removeWatch wd

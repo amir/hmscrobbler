@@ -16,7 +16,13 @@ linkToPath' = manyTill anyChar (try (string "-> ")) >> many (noneOf "\n")
 linkToPath = parse linkToPath' ""
 
 absolutePath :: String -> [String] -> IO (Maybe String)
-absolutePath basename candidates = return $ find (isSuffixOf basename) candidates
+absolutePath basename candidates =
+  case find (isSuffixOf basename) candidates of
+    Just e ->
+      case linkToPath e of
+        Right r -> return $ Just r
+        Left  _ -> return Nothing
+    Nothing -> return Nothing
 
 getAbsolutePath :: String -> String -> IO (Maybe String)
 getAbsolutePath pname fname = do

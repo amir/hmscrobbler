@@ -1,8 +1,6 @@
 module Flac
     (
-        vorbisComments
-      , getVorbisComments
-      , blockData
+      getFileVorbisComments
     ) where
 
 import Data.Serialize.Get
@@ -11,7 +9,7 @@ import Data.Bits((.&.), shiftR)
 import qualified Data.ByteString.Lazy as L
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BSC
-import Data.Text hiding (filter)
+import Data.Text hiding (filter, head)
 import Data.Text.Encoding as E
 
 data VorbisCommentItem = VorbisCommentItem Text Text deriving (Eq, Ord, Show)
@@ -110,3 +108,10 @@ vorbisComments = do
   bs <- getMetadataBlocks False
   let fbs = filter (\x -> blockType (header x) == VorbisComment) bs
   return fbs
+
+getFileVorbisComments :: FilePath -> IO (Either String VorbisComments)
+getFileVorbisComments path = do
+  input <- L.readFile path
+  case runGetLazy vorbisComments input of
+    Left  e -> return $ Left e
+    Right r -> return $ runGetLazy getVorbisComments (blockData $ head r)
