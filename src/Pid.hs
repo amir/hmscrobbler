@@ -1,14 +1,19 @@
-module PidUtils
+module Pid
      (
          getAbsolutePath
+       , linkToPath
      ) where
 
+import Data.List(find, isSuffixOf)
+import Text.ParserCombinators.Parsec
 import System.Exit(ExitCode(ExitSuccess))
 import System.Process(readProcessWithExitCode)
-import Data.List(find, isSuffixOf)
 
 pidFdsPath :: String -> String
 pidFdsPath x = "/proc/" ++ x ++ "/fd"
+
+linkToPath' = manyTill anyChar (try (string "-> ")) >> many (noneOf "\n")
+linkToPath = parse linkToPath' ""
 
 absolutePath :: String -> [String] -> IO (Maybe String)
 absolutePath basename candidates = return $ find (isSuffixOf basename) candidates
