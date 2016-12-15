@@ -7,9 +7,7 @@ import Data.IORef
 import Control.Monad
 import System.INotify
 import Control.Concurrent
-import Data.Serialize.Get
 import System.Environment(getArgs)
-import qualified Data.ByteString.Lazy as BSL
 
 import Pid
 import Flac
