@@ -62,7 +62,6 @@ main = do
               path <- getAbsolutePath mplayerBin p
               case path of
                 Just abs -> do
-                  print abs
                   comments <- getFileVorbisComments abs
                   case comments of
                     Right cs ->
@@ -71,9 +70,13 @@ main = do
                           ts <- round `fmap` getPOSIXTime
                           g  <- scrobbleItem cs lastfmKey lastfmSecret s ts
                           pure ()
-                        Nothing -> pure ()
+                        Nothing ->
+                          putStrLn "unable to scrobble. no last.fm session found."
+                    Left _ ->
+                      putStrLn $ "unable to extract vorbis comments from " ++ abs
 
-                Nothing -> pure ()
+                Nothing ->
+                  putStrLn $ "unable to locate " ++ p
 
             StartingPlayback -> do
               pipeHandle <- openFile namedPipe ReadWriteMode
