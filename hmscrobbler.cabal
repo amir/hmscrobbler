@@ -17,14 +17,17 @@ library
   hs-source-dirs:      src
   exposed-modules:     Pid
                      , Flac
+                     , LastFM
                      , MPlayer
   build-depends:       base >= 4.7 && < 5
-                     , cereal == 0.5.4.0
+                     , text       == 1.2.2.1
+                     , aeson      == 0.11.2.1
+                     , cereal     == 0.5.4.0
+                     , binary     == 0.8.3.0
+                     , parsec     == 3.1.11
+                     , process    == 1.4.2.0
+                     , liblastfm  == 0.6.0
                      , bytestring == 0.10.8.1
-                     , process == 1.4.2.0
-                     , binary == 0.8.3.0
-                     , text == 1.2.2.1
-                     , parsec == 3.1.11
   default-language:    Haskell2010
 
 executable hmscrobbler-exe
@@ -33,6 +36,8 @@ executable hmscrobbler-exe
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
                      , hmscrobbler
+                     , time     == 1.6.0.1
+                     , text     == 1.2.2.1
                      , hinotify == 0.3.9
   default-language:    Haskell2010
 

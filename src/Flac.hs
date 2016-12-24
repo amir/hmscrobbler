@@ -1,6 +1,8 @@
 module Flac
     (
-      getFileVorbisComments
+        VorbisComments(..)
+      , VorbisCommentItem(..)
+      , getFileVorbisComments
     ) where
 
 import Data.Serialize.Get
