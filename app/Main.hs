@@ -29,6 +29,11 @@ fromEnv key = do
   v <- getEnv key
   pure $ pack v
 
+offset :: Integer -> Integer
+offset i
+  | i > 0 = pred i
+  | otherwise = i
+
 main :: IO ()
 main = do
   (namedPipe:outputLog:_) <- getArgs
@@ -44,7 +49,7 @@ main = do
     h        <- openFile outputLog ReadMode
     lastSize <- readIORef sizeRef
 
-    hSeek h AbsoluteSeek (pred lastSize)
+    hSeek h AbsoluteSeek (offset lastSize)
 
     newSize     <- hFileSize h
     !newContent <- hGetContents h
