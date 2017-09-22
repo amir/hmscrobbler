@@ -74,7 +74,9 @@ main = do
                         Just s -> do
                           ts <- round `fmap` getPOSIXTime
                           g  <- scrobbleItem cs lastfmKey lastfmSecret s ts
-                          pure ()
+                          case g of
+                            Left e -> print e
+                            _ -> pure ()
                         Nothing ->
                           putStrLn "unable to scrobble. no last.fm session found."
                     Left _ ->
