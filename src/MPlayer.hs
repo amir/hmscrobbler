@@ -24,7 +24,7 @@ getProperty :: String -> String
 getProperty p = "get_property " ++ p
 
 answerTypeParser :: GenParser Char st AnswerType
-answerTypeParser = string "path" >> return Path
+answerTypeParser = string "filename" >> return Path
 
 inputLines :: GenParser Char st [Output]
 inputLines =

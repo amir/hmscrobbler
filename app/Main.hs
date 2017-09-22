@@ -85,7 +85,7 @@ main = do
 
             StartingPlayback -> do
               pipeHandle <- openFile namedPipe ReadWriteMode
-              hPutStrLn pipeHandle $ getProperty "path"
+              hPutStrLn pipeHandle $ getProperty "filename"
               hClose pipeHandle
 
             Noise -> pure ()
