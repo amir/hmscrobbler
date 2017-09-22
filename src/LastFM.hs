@@ -80,7 +80,7 @@ scrobbleItem :: VorbisComments -> Text -> Text -> Text -> Int64 -> IO (Either La
 scrobbleItem cs key secret session ts =
   case vorbisCommentsToScrobble cs of
     Just item -> withConnection $ \conn ->
-      lastfm conn . sign (Secret secret) $ scrobble (NEL.repeat (item <*> timestamp ts)) <*>
+      lastfm conn . sign (Secret secret) $ scrobble (NEL.fromList [item <*> timestamp ts]) <*>
         apiKey key <*> sessionKey session <* json
     Nothing -> return $ Left $ LastfmBadResponse "unable to extract metadata"
 
